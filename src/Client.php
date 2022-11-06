@@ -36,7 +36,7 @@ class Client
     /**
      * Constructor
      */
-    public function __construct(HttpClient $httpClient = null, string $token = "", string $org = "")
+    public function __construct(HttpClient $httpClient, string $token, string $org)
     {
         $this->httpClient = $httpClient;
         $this->token = $token;
