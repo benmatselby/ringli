@@ -1,0 +1,31 @@
+name: PHP
+on: push
+jobs:
+  build:
+    strategy:
+      matrix:
+        php-version: [8.1]
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Get dependencies
+        run: make install
+
+      - name: Lint
+        run: make lint
+
+      - name: Static analysis
+        run: |
+          make static-phpstan
+          make static-phpcs
+
+      - name: Test
+        run: make test

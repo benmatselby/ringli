@@ -1,0 +1,12 @@
+# Dependencies
+vendor/
+
+# Binary applications
+bin/
+!bin/ringli.php
+
+# Build dir
+build/
+
+# Caches
+.phpunit.result.cache
