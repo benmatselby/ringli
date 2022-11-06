@@ -8,6 +8,8 @@ namespace Ringli\Command;
 
 use Ringli\Client;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Helper;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -45,9 +47,32 @@ class ListPipelinesCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $data = $this->client->getPipelines();
-        var_export($data);
-        // $output->writeln($data);
+        $pipelines = $this->client->getPipelines();
+
+        $table = new Table($output);
+        $table->setHeaders(['Project', 'Build', 'Status']);
+
+        foreach ($pipelines['items'] as $pipeline) {
+            $workflowData = $this->client->getWorkflowForPipeline($pipeline['id']);
+            $workflows = $workflowData['items'] ?? [];
+
+            if (!isset($workflows[0]['pipeline_number'])) {
+                continue;
+            }
+
+            $pipelineNumber = $workflows[0]['pipeline_number'] ?? "";
+            $pipelineSlug = $pipeline['project_slug'];
+            $pipelineStatus = $workflows[0]['status'] ?? "";
+
+            $row = [
+                $pipelineSlug,
+                "<href=https://app.circleci.com/pipelines/${pipelineSlug}/${pipelineNumber}>${pipelineNumber}</>",
+                $pipelineStatus,
+            ];
+
+            $table->addRow($row);
+        }
+        $table->render();
         return 0;
     }
 }
