@@ -52,17 +52,17 @@ class ListPipelinesCommand extends Command
         $table->setHeaders(['Project', 'Build', 'Status', 'Started']);
 
         foreach ($pipelines['items'] as $pipeline) {
-            $workflowData = $this->client->getWorkflowForPipeline($pipeline['id']);
+            $workflowData = $this->client->getWorkflowForPipeline((string) $pipeline['id']);
             $workflows = $workflowData['items'] ?? [];
 
             if (!isset($workflows[0]['pipeline_number'])) {
                 continue;
             }
 
-            $pipelineNumber = (string) $workflows[0]['pipeline_number'] ?? "";
+            $pipelineNumber = (string) ($workflows[0]['pipeline_number'] ?? "");
             $pipelineSlug = (string) $pipeline['project_slug'];
-            $pipelineStatus = (string) $workflows[0]['status'] ?? "";
-            $started = (string) $workflows[0]['created_at'] ?? "";
+            $pipelineStatus = (string) ($workflows[0]['status'] ?? "");
+            $started = (string) ($workflows[0]['created_at'] ?? "");
 
             $row = [
                 $pipelineSlug,

@@ -73,11 +73,13 @@ class Client
     /**
      * Getting for workflows for a given pipeline
      *
+     * @param string $id The ID of the pipeline.
+     *
      * @return array<mixed>
      */
-    public function getWorkflowForPipeline(string $pipeline): array
+    public function getWorkflowForPipeline(string $id): array
     {
-        $response = $this->request('GET', "/pipeline/${pipeline}/workflow");
+        $response = $this->request('GET', "/pipeline/${id}/workflow");
         return json_decode((string) $response->getBody(), true);
     }
 }
