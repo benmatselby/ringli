@@ -22,5 +22,5 @@ export CIRCLE_CI_ORG="" # vcs-slug/org-name e.g. gh/benmatselby
 git clone https://github.com/benmatselby/ringli.git
 cd ringli
 make clean install
-bin/ringcli.php list
+./bin/ringli
 ```

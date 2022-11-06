@@ -3,7 +3,7 @@ vendor/
 
 # Binary applications
 bin/
-!bin/ringli.php
+!bin/ringli
 
 # Build dir
 build/
