@@ -1,0 +1,14 @@
+#!/usr/bin/env php
+<?php
+
+use Ringli\Client;
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+$client = new Client(new GuzzleHttp\Client(), getenv("CIRCLE_CI_TOKEN"), getenv("CIRCLE_CI_ORG"));
+
+use Symfony\Component\Console\Application;
+
+$app = new Application('Ringli');
+$app->add(new \Ringli\Command\ListPipelinesCommand($client));
+$app->run();
