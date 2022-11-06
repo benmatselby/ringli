@@ -50,7 +50,7 @@ class ListPipelinesCommand extends Command
         $pipelines = $this->client->getPipelines();
 
         $table = new Table($output);
-        $table->setHeaders(['Project', 'Build', 'Status']);
+        $table->setHeaders(['Project', 'Build', 'Status', 'Started']);
 
         foreach ($pipelines['items'] as $pipeline) {
             $workflowData = $this->client->getWorkflowForPipeline($pipeline['id']);
@@ -60,14 +60,16 @@ class ListPipelinesCommand extends Command
                 continue;
             }
 
-            $pipelineNumber = $workflows[0]['pipeline_number'] ?? "";
-            $pipelineSlug = $pipeline['project_slug'];
-            $pipelineStatus = $workflows[0]['status'] ?? "";
+            $pipelineNumber = (string) $workflows[0]['pipeline_number'] ?? "";
+            $pipelineSlug = (string) $pipeline['project_slug'];
+            $pipelineStatus = (string) $workflows[0]['status'] ?? "";
+            $started = (string) $workflows[0]['created_at'] ?? "";
 
             $row = [
                 $pipelineSlug,
                 "<href=https://app.circleci.com/pipelines/${pipelineSlug}/${pipelineNumber}>${pipelineNumber}</>",
                 $pipelineStatus,
+                $started,
             ];
 
             $table->addRow($row);
