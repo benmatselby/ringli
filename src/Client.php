@@ -69,4 +69,15 @@ class Client
         $response = $this->request('GET', '/pipeline');
         return json_decode((string) $response->getBody(), true);
     }
+
+    /**
+     * Getting for workflows for a given pipeline
+     *
+     * @return array<mixed>
+     */
+    public function getWorkflowForPipeline(string $pipeline): array
+    {
+        $response = $this->request('GET', "/pipeline/${pipeline}/workflow");
+        return json_decode((string) $response->getBody(), true);
+    }
 }
