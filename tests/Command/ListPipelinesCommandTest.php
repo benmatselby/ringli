@@ -47,6 +47,9 @@ class ListPipelinesCommandTest extends \PHPUnit\Framework\TestCase
             ->method('getWorkflowForPipeline')
             ->willReturn(['items' => $workflows]);
 
+        $client
+            ->method('getOrg')
+            ->willReturn("Gotham");
 
         $tester = new CommandTester(new ListPipelinesCommand($client));
         $tester->execute([]);
@@ -66,6 +69,7 @@ class ListPipelinesCommandTest extends \PHPUnit\Framework\TestCase
                 ['id' => 1, 'project_slug' => 'batman'],
                 [],
                 <<<END
+Report for Gotham
 +---------+-----+--------+--------+---------+
 | Project | Who | Branch | Status | Started |
 +---------+-----+--------+--------+---------+
@@ -75,6 +79,7 @@ END
                 ['id' => 1, 'project_slug' => 'batman'],
                 [[]],
                 <<<END
+Report for Gotham
 +---------+-----+--------+--------+---------+
 | Project | Who | Branch | Status | Started |
 +---------+-----+--------+--------+---------+
@@ -84,6 +89,7 @@ END
                 ['id' => 1, 'project_slug' => 'batman'],
                 [['pipeline_number' => 1, 'status' => 'running']],
                 <<<END
+Report for Gotham
 +----------+-----+--------+---------+---------+
 | Project  | Who | Branch | Status  | Started |
 +----------+-----+--------+---------+---------+
@@ -98,6 +104,7 @@ END
                 ],
                 [['pipeline_number' => 9, 'status' => 'running']],
                 <<<END
+Report for Gotham
 +----------+-------+--------+---------+---------+
 | Project  | Who   | Branch | Status  | Started |
 +----------+-------+--------+---------+---------+
@@ -112,6 +119,7 @@ END
                 ],
                 [['pipeline_number' => 9, 'status' => 'success']],
                 <<<END
+Report for Gotham
 +----------+-------+--------+---------+---------+
 | Project  | Who   | Branch | Status  | Started |
 +----------+-------+--------+---------+---------+
@@ -126,6 +134,7 @@ END
                 ],
                 [['pipeline_number' => 9, 'status' => 'failed']],
                 <<<END
+Report for Gotham
 +----------+-------+--------+--------+---------+
 | Project  | Who   | Branch | Status | Started |
 +----------+-------+--------+--------+---------+
@@ -140,6 +149,7 @@ END
                 ],
                 [['pipeline_number' => 9, 'status' => 'success']],
                 <<<END
+Report for Gotham
 +----------+-------+--------+---------+---------+
 | Project  | Who   | Branch | Status  | Started |
 +----------+-------+--------+---------+---------+
@@ -154,6 +164,7 @@ END
                 ],
                 [['pipeline_number' => 9, 'status' => '']],
                 <<<END
+Report for Gotham
 +----------+-------+--------+--------+---------+
 | Project  | Who   | Branch | Status | Started |
 +----------+-------+--------+--------+---------+

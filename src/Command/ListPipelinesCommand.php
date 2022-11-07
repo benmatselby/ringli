@@ -6,6 +6,7 @@
 
 namespace Ringli\Command;
 
+use DateTime;
 use Ringli\Client;
 use Ringli\Workflow\Status;
 use Symfony\Component\Console\Command\Command;
@@ -49,6 +50,8 @@ class ListPipelinesCommand extends Command
     {
         $pipelines = $this->client->getPipelines();
 
+        $output->writeln("Report for " . $this->client->getOrg());
+
         $table = new Table($output);
         $table->setHeaders(['Project', 'Who', 'Branch', 'Status', 'Started']);
 
@@ -70,15 +73,17 @@ class ListPipelinesCommand extends Command
 
             $number = (string) ($workflow['pipeline_number'] ?? "");
             $slug = (string) $pipeline['project_slug'];
+            $slug = preg_replace('|' . $this->client->getOrg() . "/" . '|i', "", $slug);
             $status = $this->getStatus((string) $workflow['status']);
             $started = (string) ($workflow['created_at'] ?? "");
+            $startTime = \DateTime::createFromFormat(\DateTime::ISO8601, $started);
 
             $row = [
                 "<href=https://app.circleci.com/pipelines/${slug}/${number}>${slug}:${number}</>",
                 $actor,
                 $branch,
                 $status,
-                $started,
+                $startTime != false ? $startTime->format("Y-m-d H:i:s") : $started,
             ];
 
             $table->addRow($row);
