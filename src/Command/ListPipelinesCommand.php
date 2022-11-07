@@ -49,23 +49,33 @@ class ListPipelinesCommand extends Command
         $pipelines = $this->client->getPipelines();
 
         $table = new Table($output);
-        $table->setHeaders(['Project', 'Build', 'Status', 'Started']);
+        $table->setHeaders(['Project', 'Who', 'Branch', 'Build', 'Status', 'Started']);
 
         foreach ($pipelines['items'] as $pipeline) {
             $workflowData = $this->client->getWorkflowForPipeline((string) $pipeline['id']);
             $workflows = $workflowData['items'] ?? [];
 
-            if (!isset($workflows[0]['pipeline_number'])) {
+            if (!isset($workflows[0])) {
+                continue;
+            }
+            $workflow = $workflows[0];
+
+            if (!isset($workflow['pipeline_number'])) {
                 continue;
             }
 
-            $pipelineNumber = (string) ($workflows[0]['pipeline_number'] ?? "");
+            $actor = $pipeline['trigger']['actor']['login'] ?? "";
+            $branch = $pipeline['vcs']['branch'] ?? "";
+
+            $pipelineNumber = (string) ($workflow['pipeline_number'] ?? "");
             $pipelineSlug = (string) $pipeline['project_slug'];
-            $pipelineStatus = (string) ($workflows[0]['status'] ?? "");
-            $started = (string) ($workflows[0]['created_at'] ?? "");
+            $pipelineStatus = (string) ($workflow['status'] ?? "");
+            $started = (string) ($workflow['created_at'] ?? "");
 
             $row = [
                 $pipelineSlug,
+                $actor,
+                $branch,
                 "<href=https://app.circleci.com/pipelines/${pipelineSlug}/${pipelineNumber}>${pipelineNumber}</>",
                 $pipelineStatus,
                 $started,
