@@ -60,6 +60,16 @@ class Client
     }
 
     /**
+     * Getter for the CircleCI Org.
+     *
+     * @return string
+     */
+    public function getOrg(): string
+    {
+        return $this->org;
+    }
+
+    /**
      * Getter for the pipelines
      *
      * @return array<mixed>
