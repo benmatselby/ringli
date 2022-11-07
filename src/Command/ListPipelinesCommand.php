@@ -7,6 +7,7 @@
 namespace Ringli\Command;
 
 use Ringli\Client;
+use Ringli\Workflow\Status;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
@@ -67,17 +68,17 @@ class ListPipelinesCommand extends Command
             $actor = $pipeline['trigger']['actor']['login'] ?? "";
             $branch = $pipeline['vcs']['branch'] ?? "";
 
-            $pipelineNumber = (string) ($workflow['pipeline_number'] ?? "");
-            $pipelineSlug = (string) $pipeline['project_slug'];
-            $pipelineStatus = (string) ($workflow['status'] ?? "");
+            $number = (string) ($workflow['pipeline_number'] ?? "");
+            $slug = (string) $pipeline['project_slug'];
+            $status = $this->getStatus((string) $workflow['status']);
             $started = (string) ($workflow['created_at'] ?? "");
 
             $row = [
-                $pipelineSlug,
+                $slug,
                 $actor,
                 $branch,
-                "<href=https://app.circleci.com/pipelines/${pipelineSlug}/${pipelineNumber}>${pipelineNumber}</>",
-                $pipelineStatus,
+                "<href=https://app.circleci.com/pipelines/${slug}/${number}>${number}</>",
+                $status,
                 $started,
             ];
 
@@ -85,5 +86,37 @@ class ListPipelinesCommand extends Command
         }
         $table->render();
         return 0;
+    }
+
+    /**
+     * Responsible for formatting the status field with a little colour.
+     *
+     * @param string $status The raw status field.
+     *
+     * @return string The formatter status field.
+     */
+    protected function getStatus(string $status): string
+    {
+        if ($status === "") {
+            return "";
+        }
+
+        $return = $status;
+        switch ($status) {
+            case Status::RUNNING:
+                $return = "<fg=blue>${status}</>";
+                break;
+
+            case Status::SUCCESS:
+                $return = "<fg=green>${status}</>";
+                break;
+
+            case Status::FAILING:
+            case Status::FAILED:
+                $return = "<fg=red>${status}</>";
+                break;
+        }
+
+        return $return;
     }
 }
