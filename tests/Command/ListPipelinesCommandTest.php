@@ -11,6 +11,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class ListPipelinesCommandTest extends \PHPUnit\Framework\TestCase
 {
     /**
+     * @covers \Ringli\Command\ListPipelinesCommand::__construct
      * @covers \Ringli\Command\ListPipelinesCommand::configure
      */
     public function testConfigure(): void
@@ -28,13 +29,14 @@ class ListPipelinesCommandTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @covers \Ringli\Command\ListPipelinesCommand::execute
+     * @covers \Ringli\Command\ListPipelinesCommand::getStatus
      * @dataProvider provideDataForExecute
      *
      * @param array<mixed> $pipeline
-     * @param array<mixed> $workflow
+     * @param array<mixed> $workflows
      * @param string $expected
      */
-    public function testExecuteCanRenderWhatWeWant(array $pipeline, array $workflow, string $expected): void
+    public function testExecuteCanRenderWhatWeWant(array $pipeline, array $workflows, string $expected): void
     {
         $client = $this->createMock('\Ringli\Client');
         $client
@@ -43,7 +45,7 @@ class ListPipelinesCommandTest extends \PHPUnit\Framework\TestCase
 
         $client
             ->method('getWorkflowForPipeline')
-            ->willReturn(['items' => [$workflow]]);
+            ->willReturn(['items' => $workflows]);
 
 
         $tester = new CommandTester(new ListPipelinesCommand($client));
@@ -62,7 +64,25 @@ class ListPipelinesCommandTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 ['id' => 1, 'project_slug' => 'batman'],
-                ['pipeline_number' => 1, 'status' => 'running'],
+                [],
+                <<<END
++---------+-----+--------+--------+---------+
+| Project | Who | Branch | Status | Started |
++---------+-----+--------+--------+---------+
+END
+            ],
+            [
+                ['id' => 1, 'project_slug' => 'batman'],
+                [[]],
+                <<<END
++---------+-----+--------+--------+---------+
+| Project | Who | Branch | Status | Started |
++---------+-----+--------+--------+---------+
+END
+            ],
+            [
+                ['id' => 1, 'project_slug' => 'batman'],
+                [['pipeline_number' => 1, 'status' => 'running']],
                 <<<END
 +----------+-----+--------+---------+---------+
 | Project  | Who | Branch | Status  | Started |
@@ -76,13 +96,69 @@ END
                     'id' => 5, 'project_slug' => 'batman', 'trigger' =>
                     ['actor' => ['login' => 'robin']], 'vcs' => ['branch' => 'alfred']
                 ],
-                ['pipeline_number' => 9, 'status' => 'running'],
+                [['pipeline_number' => 9, 'status' => 'running']],
                 <<<END
 +----------+-------+--------+---------+---------+
 | Project  | Who   | Branch | Status  | Started |
 +----------+-------+--------+---------+---------+
 | batman:9 | robin | alfred | running |         |
 +----------+-------+--------+---------+---------+
+END
+            ],
+            [
+                [
+                    'id' => 5, 'project_slug' => 'batman', 'trigger' =>
+                    ['actor' => ['login' => 'robin']], 'vcs' => ['branch' => 'alfred']
+                ],
+                [['pipeline_number' => 9, 'status' => 'success']],
+                <<<END
++----------+-------+--------+---------+---------+
+| Project  | Who   | Branch | Status  | Started |
++----------+-------+--------+---------+---------+
+| batman:9 | robin | alfred | success |         |
++----------+-------+--------+---------+---------+
+END
+            ],
+            [
+                [
+                    'id' => 5, 'project_slug' => 'batman', 'trigger' =>
+                    ['actor' => ['login' => 'robin']], 'vcs' => ['branch' => 'alfred']
+                ],
+                [['pipeline_number' => 9, 'status' => 'failed']],
+                <<<END
++----------+-------+--------+--------+---------+
+| Project  | Who   | Branch | Status | Started |
++----------+-------+--------+--------+---------+
+| batman:9 | robin | alfred | failed |         |
++----------+-------+--------+--------+---------+
+END
+            ],
+            [
+                [
+                    'id' => 5, 'project_slug' => 'batman', 'trigger' =>
+                    ['actor' => ['login' => 'robin']], 'vcs' => ['branch' => 'alfred']
+                ],
+                [['pipeline_number' => 9, 'status' => 'success']],
+                <<<END
++----------+-------+--------+---------+---------+
+| Project  | Who   | Branch | Status  | Started |
++----------+-------+--------+---------+---------+
+| batman:9 | robin | alfred | success |         |
++----------+-------+--------+---------+---------+
+END
+            ],
+            [
+                [
+                    'id' => 5, 'project_slug' => 'batman', 'trigger' =>
+                    ['actor' => ['login' => 'robin']], 'vcs' => ['branch' => 'alfred']
+                ],
+                [['pipeline_number' => 9, 'status' => '']],
+                <<<END
++----------+-------+--------+--------+---------+
+| Project  | Who   | Branch | Status | Started |
++----------+-------+--------+--------+---------+
+| batman:9 | robin | alfred |        |         |
++----------+-------+--------+--------+---------+
 END
             ],
         ];
