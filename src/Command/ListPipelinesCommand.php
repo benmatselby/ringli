@@ -6,7 +6,6 @@
 
 namespace Ringli\Command;
 
-use DateTime;
 use Ringli\Client;
 use Ringli\Workflow\Status;
 use Symfony\Component\Console\Command\Command;
@@ -74,17 +73,17 @@ class ListPipelinesCommand extends Command
             $number = (string) ($workflow['pipeline_number'] ?? "");
             $slug = (string) $pipeline['project_slug'];
             $slug = preg_replace('|' . $this->client->getOrg() . "/" . '|i', "", $slug);
-            $status = $this->getStatus((string) $workflow['status']);
+            $status = $workflow['status'];
             $started = (string) ($workflow['created_at'] ?? "");
             $startTime = \DateTime::createFromFormat(\DateTime::ISO8601, $started);
 
-            $row = [
+            $row = $this->decorateRowByStatus($status, [
                 "<href=https://app.circleci.com/pipelines/${slug}/${number}>${slug}:${number}</>",
                 $actor,
                 $branch,
                 $status,
                 $startTime != false ? $startTime->format("Y-m-d H:i:s") : $started,
-            ];
+            ]);
 
             $table->addRow($row);
         }
@@ -93,34 +92,32 @@ class ListPipelinesCommand extends Command
     }
 
     /**
-     * Responsible for formatting the status field with a little colour.
+     * Decorate the entire row entry by the status
      *
-     * @param string $status The raw status field.
+     * @param string $status The status of the workflow
+     * @param array<mixed> $row The row we want to decorate, via the status
      *
-     * @return string The formatter status field.
+     * @return array<mixed>
      */
-    protected function getStatus(string $status): string
+    protected function decorateRowByStatus(string $status, array $row): array
     {
-        if ($status === "") {
-            return "";
+        foreach ($row as &$item) {
+            switch ($status) {
+                case Status::RUNNING:
+                    $item = "<fg=blue>${item}</>";
+                    break;
+
+                case Status::SUCCESS:
+                    $item = "<fg=green>${item}</>";
+                    break;
+
+                case Status::FAILING:
+                case Status::FAILED:
+                    $item = "<fg=red>${item}</>";
+                    break;
+            }
         }
 
-        $return = $status;
-        switch ($status) {
-            case Status::RUNNING:
-                $return = "<fg=blue>${status}</>";
-                break;
-
-            case Status::SUCCESS:
-                $return = "<fg=green>${status}</>";
-                break;
-
-            case Status::FAILING:
-            case Status::FAILED:
-                $return = "<fg=red>${status}</>";
-                break;
-        }
-
-        return $return;
+        return $row;
     }
 }
