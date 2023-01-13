@@ -89,7 +89,7 @@ class Client
      */
     public function getWorkflowForPipeline(string $id): array
     {
-        $response = $this->request('GET', "/pipeline/${id}/workflow");
+        $response = $this->request('GET', "/pipeline/{$id}/workflow");
         return json_decode((string) $response->getBody(), true);
     }
 }

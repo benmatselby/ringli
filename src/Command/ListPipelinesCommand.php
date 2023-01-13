@@ -75,10 +75,10 @@ class ListPipelinesCommand extends Command
             $slug = preg_replace('|' . $this->client->getOrg() . "/" . '|i', "", $slug);
             $status = $workflow['status'];
             $started = (string) ($workflow['created_at'] ?? "");
-            $startTime = \DateTime::createFromFormat(\DateTime::ISO8601, $started);
+            $startTime = \DateTime::createFromFormat(\DateTime::ATOM, $started);
 
             $row = $this->decorateRowByStatus($status, [
-                "<href=https://app.circleci.com/pipelines/${slug}/${number}>${slug}:${number}</>",
+                "<href=https://app.circleci.com/pipelines/{$slug}/{$number}>{$slug}:{$number}</>",
                 $actor,
                 $branch,
                 $status,
@@ -104,16 +104,16 @@ class ListPipelinesCommand extends Command
         foreach ($row as &$item) {
             switch ($status) {
                 case Status::RUNNING:
-                    $item = "<fg=blue>${item}</>";
+                    $item = "<fg=blue>{$item}</>";
                     break;
 
                 case Status::SUCCESS:
-                    $item = "<fg=green>${item}</>";
+                    $item = "<fg=green>{$item}</>";
                     break;
 
                 case Status::FAILING:
                 case Status::FAILED:
-                    $item = "<fg=red>${item}</>";
+                    $item = "<fg=red>{$item}</>";
                     break;
             }
         }
