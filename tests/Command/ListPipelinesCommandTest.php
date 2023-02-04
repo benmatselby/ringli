@@ -62,7 +62,7 @@ class ListPipelinesCommandTest extends \PHPUnit\Framework\TestCase
      *
      * @return array<mixed>
      */
-    protected function provideDataForExecute(): array
+    public static function provideDataForExecute(): array
     {
         return [
             [
