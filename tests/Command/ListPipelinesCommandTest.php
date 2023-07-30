@@ -29,7 +29,7 @@ class ListPipelinesCommandTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @covers \Ringli\Command\ListPipelinesCommand::execute
-     * @covers \Ringli\Command\ListPipelinesCommand::getStatus
+     * @covers \Ringli\Command\ListPipelinesCommand::decorateRowByStatus
      * @dataProvider provideDataForExecute
      *
      * @param array<mixed> $pipeline

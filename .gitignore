@@ -10,3 +10,4 @@ build/
 
 # Caches
 .phpunit.result.cache
+.phpunit.cache/
