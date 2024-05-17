@@ -11,4 +11,5 @@ use Symfony\Component\Console\Application;
 
 $app = new Application('Ringli');
 $app->add(new \Ringli\Command\ListPipelinesCommand($client));
+$app->add(new \Ringli\Command\ListMyPipelinesCommand($client));
 $app->run();

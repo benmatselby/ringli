@@ -2,34 +2,34 @@
 
 namespace Ringli\Test\Command;
 
-use Ringli\Command\ListPipelinesCommand;
+use Ringli\Command\ListMyPipelinesCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
- * Responsible for testing \Ringli\Command\ListPipelinesCommand
+ * Responsible for testing \Ringli\Command\ListMyPipelinesCommand
  */
-class ListPipelinesCommandTest extends \PHPUnit\Framework\TestCase
+class ListMyPipelinesCommandTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @covers \Ringli\Command\ListPipelinesCommand::__construct
-     * @covers \Ringli\Command\ListPipelinesCommand::configure
+     * @covers \Ringli\Command\ListMyPipelinesCommand::__construct
+     * @covers \Ringli\Command\ListMyPipelinesCommand::configure
      */
     public function testConfigure(): void
     {
         $client = $this->createMock('\Ringli\Client');
 
-        $command = new ListPipelinesCommand($client);
+        $command = new ListMyPipelinesCommand($client);
 
-        $this->assertEquals($command->getName(), 'pipelines');
+        $this->assertEquals($command->getName(), 'mine');
         $this->assertEquals(
             $command->getDescription(),
-            'List all the pipelines'
+            'List my pipelines'
         );
     }
 
     /**
-     * @covers \Ringli\Command\ListPipelinesCommand::execute
-     * @covers \Ringli\Command\ListPipelinesCommand::decorateRowByStatus
+     * @covers \Ringli\Command\ListMyPipelinesCommand::execute
+     * @covers \Ringli\Command\ListMyPipelinesCommand::decorateRowByStatus
      * @dataProvider provideDataForExecute
      *
      * @param array<mixed> $pipeline
@@ -40,7 +40,7 @@ class ListPipelinesCommandTest extends \PHPUnit\Framework\TestCase
     {
         $client = $this->createMock('\Ringli\Client');
         $client
-            ->method('getPipelines')
+            ->method('getMyPipelines')
             ->willReturn(['items' => [$pipeline]]);
 
         $client
@@ -51,8 +51,8 @@ class ListPipelinesCommandTest extends \PHPUnit\Framework\TestCase
             ->method('getOrg')
             ->willReturn("Gotham");
 
-        $tester = new CommandTester(new ListPipelinesCommand($client));
-        $tester->execute([]);
+        $tester = new CommandTester(new ListMyPipelinesCommand($client));
+        $tester->execute(["repo" => "batman"]);
 
         $this->assertEquals($expected, trim($tester->getDisplay()));
     }
