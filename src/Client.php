@@ -81,6 +81,17 @@ class Client
     }
 
     /**
+     * Getter for the pipelines for a given repo
+     *
+     * @return array<mixed>
+     */
+    public function getMyPipelines(string $repo): array
+    {
+        $response = $this->request('GET', "/project/{$this->org}/{$repo}/pipeline/mine");
+        return json_decode((string) $response->getBody(), true);
+    }
+
+    /**
      * Getting for workflows for a given pipeline
      *
      * @param string $id The ID of the pipeline.
