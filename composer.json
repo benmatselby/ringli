@@ -2,7 +2,7 @@
     "name": "benmatselby/ringli",
     "description": "Little CLI tool to get some CircleCI data",
     "require": {
-        "symfony/console": "^6.1",
+        "symfony/console": "^7.2",
         "guzzlehttp/guzzle": "^7.5"
     },
     "require-dev": {
