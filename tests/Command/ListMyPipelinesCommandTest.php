@@ -2,18 +2,17 @@
 
 namespace Ringli\Test\Command;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Ringli\Command\ListMyPipelinesCommand;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
  * Responsible for testing \Ringli\Command\ListMyPipelinesCommand
  */
+#[CoversClass(ListMyPipelinesCommand::class)]
 class ListMyPipelinesCommandTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @covers \Ringli\Command\ListMyPipelinesCommand::__construct
-     * @covers \Ringli\Command\ListMyPipelinesCommand::configure
-     */
     public function testConfigure(): void
     {
         $client = $this->createMock('\Ringli\Client');
@@ -28,14 +27,12 @@ class ListMyPipelinesCommandTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @covers \Ringli\Command\ListMyPipelinesCommand::execute
-     * @covers \Ringli\Command\ListMyPipelinesCommand::decorateRowByStatus
-     * @dataProvider provideDataForExecute
      *
      * @param array<mixed> $pipeline
      * @param array<mixed> $workflows
      * @param string $expected
      */
+    #[DataProvider('provideDataForExecute')]
     public function testExecuteCanRenderWhatWeWant(array $pipeline, array $workflows, string $expected): void
     {
         $client = $this->createMock('\Ringli\Client');
